@@ -333,9 +333,11 @@ def suggest_improvements(code: str, language: Optional[str] = None) -> Suggestio
                 ))
                 seen_cats.add(rule["cat"])
                 break
+    # Suggest docstrings only when functions/classes exist
+    has_docstring = re.search(r'"""[\s\S]*?"""|\'\'\'[\s\S]*?\'\'\'', code)
+    has_function_or_class = re.search(r"\bdef\b|\bclass\b", code)
 
-    # Always add docstring tip if no docstring present
-    if not re.search(r'"""[\s\S]*?"""|\'\'\'[\s\S]*?\'\'\'', code):
+    if has_function_or_class and not has_docstring:
         cards.append(SuggestionCard(
             category="Documentation",
             description="Add docstrings to your functions to describe their purpose, parameters, and return value.",
